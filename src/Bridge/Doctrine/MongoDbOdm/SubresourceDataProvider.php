@@ -105,7 +105,7 @@ final class SubresourceDataProvider implements SubresourceDataProviderInterface
             }
         }
 
-        $iterator = $aggregationBuilder->hydrate($resourceClass)->execute($executeOptions);
+        $iterator = $aggregationBuilder->hydrate($resourceClass)->getAggregation($executeOptions);
 
         return $context['collection'] ? $iterator->toArray() : ($iterator->current() ?: null);
     }
@@ -171,7 +171,7 @@ final class SubresourceDataProvider implements SubresourceDataProviderInterface
         // Recurse aggregations
         $aggregation = $this->buildAggregation($identifiers, $context, $executeOptions, $aggregation, --$remainingIdentifiers, $topAggregationBuilder);
 
-        $results = $aggregation->execute($executeOptions)->toArray();
+        $results = $aggregation->getAggregation($executeOptions)->toArray();
         $in = array_reduce($results, static function ($in, $result) use ($previousAssociationProperty) {
             return $in + array_map(static function ($result) {
                 return $result['_id'];

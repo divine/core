@@ -102,6 +102,6 @@ final class ItemDataProvider implements DenormalizedIdentifiersAwareItemDataProv
         $attribute = $resourceMetadata->getItemOperationAttribute($operationName, 'doctrine_mongodb', [], true);
         $executeOptions = $attribute['execute_options'] ?? [];
 
-        return $aggregationBuilder->hydrate($resourceClass)->execute($executeOptions)->current() ?: null;
+        return $aggregationBuilder->hydrate($resourceClass)->getAggregation($executeOptions)->current() ?: null;
     }
 }

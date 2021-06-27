@@ -120,7 +120,7 @@ final class PaginationExtension implements AggregationResultCollectionExtensionI
         $attribute = $resourceMetadata->getCollectionOperationAttribute($operationName, 'doctrine_mongodb', [], true);
         $executeOptions = $attribute['execute_options'] ?? [];
 
-        return new Paginator($aggregationBuilder->execute($executeOptions), $manager->getUnitOfWork(), $resourceClass, $aggregationBuilder->getPipeline());
+        return new Paginator($aggregationBuilder->getAggregation($executeOptions), $manager->getUnitOfWork(), $resourceClass, $aggregationBuilder->getPipeline());
     }
 
     private function addCountToContext(Builder $aggregationBuilder, array $context): array
@@ -130,7 +130,7 @@ final class PaginationExtension implements AggregationResultCollectionExtensionI
         }
 
         if (isset($context['filters']['last']) && !isset($context['filters']['before'])) {
-            $context['count'] = $aggregationBuilder->count('count')->execute()->toArray()[0]['count'];
+            $context['count'] = $aggregationBuilder->count('count')->getAggregation()->toArray()[0]['count'];
         }
 
         return $context;
