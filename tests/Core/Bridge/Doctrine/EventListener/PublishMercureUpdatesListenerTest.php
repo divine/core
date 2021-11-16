@@ -332,7 +332,7 @@ class PublishMercureUpdatesListenerTest extends TestCase
             'get' => (new Get())->withMercure(['topics' => ['/dummies/1', '/users/3'], 'hub' => 'managed', 'enable_async_update' => false])->withNormalizationContext(['groups' => ['baz']]),
         ]))]));
         $resourceMetadataFactoryProphecy->create(DummyProduct::class)->willReturn(new ResourceMetadataCollection(DummyMercure::class, [(new ApiResource())->withOperations(new Operations([
-            'get' => (new Get())->withMercure(['include_type' => true]),
+            'get' => (new Get())->withMercure(['hub' => 'managed', 'include_type' => true]),
         ]))]));
 
         $serializerProphecy = $this->prophesize(SerializerInterface::class);
