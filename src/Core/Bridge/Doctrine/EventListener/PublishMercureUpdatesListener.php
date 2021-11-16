@@ -20,6 +20,7 @@ use ApiPlatform\Core\Bridge\Symfony\Messenger\DispatchTrait;
 use ApiPlatform\Core\Util\ResourceClassInfoTrait;
 use ApiPlatform\Exception\InvalidArgumentException;
 use ApiPlatform\Exception\OperationNotFoundException;
+use ApiPlatform\Exception\ResourceClassNotFoundException;
 use ApiPlatform\Exception\RuntimeException;
 use ApiPlatform\GraphQl\Subscription\MercureSubscriptionIriGeneratorInterface as GraphQlMercureSubscriptionIriGeneratorInterface;
 use ApiPlatform\GraphQl\Subscription\SubscriptionManagerInterface as GraphQlSubscriptionManagerInterface;
@@ -56,6 +57,7 @@ final class PublishMercureUpdatesListener
         'normalization_context' => true,
         'hub' => true,
         'enable_async_update' => true,
+        'include_type' => false,
     ];
 
     private $iriConverter;
@@ -174,8 +176,9 @@ final class PublishMercureUpdatesListener
         }
 
         try {
-            $options = $this->resourceMetadataFactory->create($resourceClass)->getOperation()->getMercure() ?? false;
-        } catch (OperationNotFoundException $e) {
+            $resourceMetadata = $this->resourceMetadataFactory->create($resourceClass);
+            $options = $resourceMetadata->getOperation()->getMercure() ?? false;
+        } catch (OperationNotFoundException|ResourceClassNotFoundException $e) {
             return;
         }
 
@@ -247,6 +250,7 @@ final class PublishMercureUpdatesListener
             $this->deletedObjects[(object) [
                 'id' => $this->iriConverter->getIriFromItem($object),
                 'iri' => $this->iriConverter->getIriFromItem($object, null, UrlGeneratorInterface::ABS_URL),
+                'type' => $resourceMetadata->getIri() ?: $resourceMetadata->getShortName(),
             ]] = $options;
 
             return;
@@ -266,7 +270,7 @@ final class PublishMercureUpdatesListener
             // and I'm not a fond of this approach.
             $iri = $options['topics'] ?? $object->iri;
             /** @var string $data */
-            $data = json_encode(['@id' => $object->id]);
+            $data = json_encode(array_filter(['@id' => $object->id, '@type' => $options['include_type'] ? $object->type : null]));
         } else {
             $resourceClass = $this->getObjectClass($object);
             $context = $options['normalization_context'] ?? $this->resourceMetadataFactory->create($resourceClass)->getOperation()->getNormalizationContext() ?? [];
