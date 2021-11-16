@@ -34,6 +34,7 @@ use ApiPlatform\Tests\Fixtures\TestBundle\Entity\DummyCar;
 use ApiPlatform\Tests\Fixtures\TestBundle\Entity\DummyFriend;
 use ApiPlatform\Tests\Fixtures\TestBundle\Entity\DummyMercure;
 use ApiPlatform\Tests\Fixtures\TestBundle\Entity\DummyOffer;
+use ApiPlatform\Tests\Fixtures\TestBundle\Entity\DummyProduct;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
@@ -284,6 +285,7 @@ class PublishMercureUpdatesListenerTest extends TestCase
         $toDeleteExpressionLanguage = new DummyFriend();
         $toDeleteExpressionLanguage->setId(4);
         $toDeleteMercureOptions = new DummyOffer();
+        $toDeleteMercureOptionIncludeType = new DummyProduct();
 
         $resourceClassResolverProphecy = $this->prophesize(ResourceClassResolverInterface::class);
         $resourceClassResolverProphecy->getResourceClass(Argument::type(Dummy::class))->willReturn(Dummy::class);
@@ -307,6 +309,8 @@ class PublishMercureUpdatesListenerTest extends TestCase
         $iriConverterProphecy->getIriFromItem($toDeleteExpressionLanguage, null, UrlGeneratorInterface::ABS_URL)->willReturn('http://example.com/dummy_friends/4')->shouldBeCalled();
         $iriConverterProphecy->getIriFromItem($toDeleteMercureOptions)->willReturn('/dummy_offers/5')->shouldBeCalled();
         $iriConverterProphecy->getIriFromItem($toDeleteMercureOptions, null, UrlGeneratorInterface::ABS_URL)->willReturn('http://example.com/dummy_offers/5')->shouldBeCalled();
+        $iriConverterProphecy->getIriFromItem($toDeleteMercureOptionIncludeType)->willReturn('/products/1')->shouldBeCalled();
+        $iriConverterProphecy->getIriFromItem($toDeleteMercureOptionIncludeType, null, UrlGeneratorInterface::ABS_URL)->willReturn('http://example.com/products/1')->shouldBeCalled();
 
         $resourceMetadataFactoryProphecy = $this->prophesize(ResourceMetadataCollectionFactoryInterface::class);
 
@@ -326,6 +330,9 @@ class PublishMercureUpdatesListenerTest extends TestCase
         ]))]));
         $resourceMetadataFactoryProphecy->create(DummyMercure::class)->willReturn(new ResourceMetadataCollection(DummyMercure::class, [(new ApiResource())->withOperations(new Operations([
             'get' => (new Get())->withMercure(['topics' => ['/dummies/1', '/users/3'], 'hub' => 'managed', 'enable_async_update' => false])->withNormalizationContext(['groups' => ['baz']]),
+        ]))]));
+        $resourceMetadataFactoryProphecy->create(DummyProduct::class)->willReturn(new ResourceMetadataCollection(DummyMercure::class, [(new ApiResource())->withOperations(new Operations([
+            'get' => (new Get())->withMercure(['include_type' => true]),
         ]))]));
 
         $serializerProphecy = $this->prophesize(SerializerInterface::class);
@@ -365,7 +372,7 @@ class PublishMercureUpdatesListenerTest extends TestCase
         $uowProphecy = $this->prophesize(UnitOfWork::class);
         $uowProphecy->getScheduledEntityInsertions()->willReturn([$toInsert, $toInsertNotResource])->shouldBeCalled();
         $uowProphecy->getScheduledEntityUpdates()->willReturn([$toUpdate, $toUpdateNoMercureAttribute, $toUpdateMercureOptions, $toUpdateMercureTopicOptions])->shouldBeCalled();
-        $uowProphecy->getScheduledEntityDeletions()->willReturn([$toDelete, $toDeleteExpressionLanguage, $toDeleteMercureOptions])->shouldBeCalled();
+        $uowProphecy->getScheduledEntityDeletions()->willReturn([$toDelete, $toDeleteExpressionLanguage, $toDeleteMercureOptions, $toDeleteMercureOptionIncludeType])->shouldBeCalled();
 
         $emProphecy = $this->prophesize(EntityManagerInterface::class);
         $emProphecy->getUnitOfWork()->willReturn($uowProphecy->reveal())->shouldBeCalled();
@@ -374,7 +381,7 @@ class PublishMercureUpdatesListenerTest extends TestCase
         $listener->onFlush($eventArgs);
         $listener->postFlush();
 
-        $this->assertSame(['1', '2', 'mercure_custom_data', 'mercure_options', '{"@id":"\/dummies\/3"}', '{"@id":"\/dummy_friends\/4"}', '{"@id":"\/dummy_offers\/5"}'], $data);
+        $this->assertSame(['1', '2', 'mercure_custom_data', 'mercure_options', '{"@id":"\/dummies\/3"}', '{"@id":"\/dummy_friends\/4"}', '{"@id":"\/dummy_offers\/5"}', '{"@id":"\/products\/1","@type":"Product"}'], $data);
         $this->assertSame(['http://example.com/dummies/1', 'http://example.com/dummies/2', 'http://example.com/custom_topics/1', '/dummies/1', '/users/3', 'http://example.com/dummies/3', 'http://example.com/dummy_friends/4', 'http://example.com/custom_topics/1'], $topics);
         $this->assertSame([false, false, false, false, false, true, false], $private);
         $this->assertSame([null, null, null, null, null, 10, null], $retry);

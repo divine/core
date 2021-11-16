@@ -176,8 +176,8 @@ final class PublishMercureUpdatesListener
         }
 
         try {
-            $resourceMetadata = $this->resourceMetadataFactory->create($resourceClass);
-            $options = $resourceMetadata->getOperation()->getMercure() ?? false;
+            $operation = $this->resourceMetadataFactory->create($resourceClass)->getOperation();
+            $options = $operation->getMercure() ?? false;
         } catch (OperationNotFoundException|ResourceClassNotFoundException $e) {
             return;
         }
@@ -250,7 +250,7 @@ final class PublishMercureUpdatesListener
             $this->deletedObjects[(object) [
                 'id' => $this->iriConverter->getIriFromItem($object),
                 'iri' => $this->iriConverter->getIriFromItem($object, null, UrlGeneratorInterface::ABS_URL),
-                'type' => $resourceMetadata->getIri() ?: $resourceMetadata->getShortName(),
+                'type' => $operation->getShortName(),
             ]] = $options;
 
             return;
