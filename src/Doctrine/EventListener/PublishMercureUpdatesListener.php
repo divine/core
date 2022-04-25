@@ -252,7 +252,7 @@ final class PublishMercureUpdatesListener
             $this->deletedObjects[(object) [
                 'id' => $this->iriConverter->getIriFromItem($object),
                 'iri' => $this->iriConverter->getIriFromItem($object, null, UrlGeneratorInterface::ABS_URL),
-                'type' => lcfirst($resourceMetadata->getOperation()->getShortName()),
+                'type' => $resourceMetadata->getOperation()->getShortName(),
             ]] = $options;
 
             return;
