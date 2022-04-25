@@ -56,7 +56,7 @@ final class PublishMercureUpdatesListener
         'normalization_context' => true,
         'hub' => true,
         'enable_async_update' => true,
-        'include_id' => true
+        'include_id' => true,
     ];
 
     private $iriConverter;
@@ -174,10 +174,10 @@ final class PublishMercureUpdatesListener
             return;
         }
 
-        $resourceMeta = $this->resourceMetadataFactory->create($resourceClass);
+        $resourceMetadata = $this->resourceMetadataFactory->create($resourceClass);
 
         try {
-            $options = $resourceMeta->getOperation()->getMercure() ?? false;
+            $options = $resourceMetadata->getOperation()->getMercure() ?? false;
         } catch (OperationNotFoundException $e) {
             return;
         }
@@ -249,11 +249,10 @@ final class PublishMercureUpdatesListener
         }
 
         if ('deletedObjects' === $property) {
-            var_dump($resourceMeta->getOperation()->getShortName());
             $this->deletedObjects[(object) [
                 'id' => $this->iriConverter->getIriFromItem($object),
                 'iri' => $this->iriConverter->getIriFromItem($object, null, UrlGeneratorInterface::ABS_URL),
-                'type' => $resourceMeta->getOperation()->getShortName(),
+                'type' => lcfirst($resourceMetadata->getOperation()->getShortName()),
             ]] = $options;
 
             return;
