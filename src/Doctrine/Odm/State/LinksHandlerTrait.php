@@ -50,6 +50,7 @@ trait LinksHandlerTrait
 
     /**
      * @throws RuntimeException
+     * @throws \Exception
      */
     private function buildAggregation(string $toClass, array $links, array $identifiers, array $context, array $executeOptions, string $previousAggregationClass, Builder $previousAggregationBuilder): Builder
     {
@@ -110,7 +111,7 @@ trait LinksHandlerTrait
             return $aggregation;
         }
 
-        $results = $aggregation->execute($executeOptions)->toArray();
+        $results = $aggregation->getAggregation($executeOptions)->getIterator()->toArray();
         $in = [];
         foreach ($results as $result) {
             foreach ($result[$lookupPropertyAlias] ?? [] as $lookupResult) {

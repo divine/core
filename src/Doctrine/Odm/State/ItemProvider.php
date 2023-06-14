@@ -41,6 +41,9 @@ final class ItemProvider implements ProviderInterface
         $this->resourceMetadataCollectionFactory = $resourceMetadataCollectionFactory;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?object
     {
         $resourceClass = $operation->getClass();
@@ -71,6 +74,6 @@ final class ItemProvider implements ProviderInterface
 
         $executeOptions = $operation->getExtraProperties()['doctrine_mongodb']['execute_options'] ?? [];
 
-        return $aggregationBuilder->hydrate($resourceClass)->execute($executeOptions)->current() ?: null;
+        return $aggregationBuilder->hydrate($resourceClass)->getAggregation($executeOptions)->getIterator()->current() ?: null;
     }
 }

@@ -178,7 +178,7 @@ class PaginationExtensionTest extends TestCase
             ],
         ]);
         $countProphecy = $this->prophesize(Count::class);
-        $countProphecy->execute()->shouldBeCalled()->willReturn($iteratorProphecy->reveal());
+        $countProphecy->getAggregation()->shouldBeCalled()->willReturn($iteratorProphecy->reveal());
         $aggregationBuilderProphecy->count('count')->shouldBeCalled()->willReturn($countProphecy->reveal());
 
         $context = ['filters' => ['pagination' => true, 'last' => 5], 'graphql_operation_name' => 'query'];
@@ -333,7 +333,7 @@ class PaginationExtensionTest extends TestCase
         ]);
 
         $aggregationBuilderProphecy = $this->prophesize(Builder::class);
-        $aggregationBuilderProphecy->execute([])->willReturn($iteratorProphecy->reveal());
+        $aggregationBuilderProphecy->getAggregation()->willReturn($iteratorProphecy->reveal());
         $aggregationBuilderProphecy->getPipeline()->willReturn([
             [
                 '$facet' => [
@@ -381,7 +381,7 @@ class PaginationExtensionTest extends TestCase
         ]);
 
         $aggregationBuilderProphecy = $this->prophesize(Builder::class);
-        $aggregationBuilderProphecy->execute(['allowDiskUse' => true])->willReturn($iteratorProphecy->reveal());
+        $aggregationBuilderProphecy->getAggregation(['allowDiskUse' => true])->willReturn($iteratorProphecy->reveal());
         $aggregationBuilderProphecy->getPipeline()->willReturn([
             [
                 '$facet' => [

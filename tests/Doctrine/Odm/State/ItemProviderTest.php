@@ -55,7 +55,7 @@ class ItemProviderTest extends TestCase
         $aggregationBuilderProphecy = $this->prophesize(Builder::class);
         $aggregationBuilderProphecy->match()->willReturn($matchProphecy->reveal())->shouldBeCalled();
         $aggregationBuilderProphecy->hydrate(ProviderEntity::class)->willReturn($aggregationBuilderProphecy)->shouldBeCalled();
-        $aggregationBuilderProphecy->execute([])->willReturn($iterator->reveal())->shouldBeCalled();
+        $aggregationBuilderProphecy->getAggregation()->willReturn($iterator->reveal())->shouldBeCalled();
         $aggregationBuilder = $aggregationBuilderProphecy->reveal();
 
         $managerRegistry = $this->getManagerRegistry(ProviderEntity::class, $aggregationBuilder);
@@ -88,7 +88,7 @@ class ItemProviderTest extends TestCase
         $aggregationBuilderProphecy = $this->prophesize(Builder::class);
         $aggregationBuilderProphecy->match()->willReturn($matchProphecy->reveal())->shouldBeCalled();
         $aggregationBuilderProphecy->hydrate(ProviderEntity::class)->willReturn($aggregationBuilderProphecy)->shouldBeCalled();
-        $aggregationBuilderProphecy->execute(['allowDiskUse' => true])->willReturn($iterator->reveal())->shouldBeCalled();
+        $aggregationBuilderProphecy->getAggregation(['allowDiskUse' => true])->willReturn($iterator->reveal())->shouldBeCalled();
         $aggregationBuilder = $aggregationBuilderProphecy->reveal();
 
         $managerRegistry = $this->getManagerRegistry(ProviderEntity::class, $aggregationBuilder);
@@ -122,7 +122,7 @@ class ItemProviderTest extends TestCase
         $aggregationBuilderProphecy = $this->prophesize(Builder::class);
         $aggregationBuilderProphecy->match()->willReturn($matchProphecy->reveal())->shouldBeCalled();
         $aggregationBuilderProphecy->hydrate(ProviderEntity::class)->willReturn($aggregationBuilderProphecy)->shouldBeCalled();
-        $aggregationBuilderProphecy->execute([])->willReturn($iterator->reveal())->shouldBeCalled();
+        $aggregationBuilderProphecy->getAggregation()->willReturn($iterator->reveal())->shouldBeCalled();
         $aggregationBuilder = $aggregationBuilderProphecy->reveal();
 
         $managerRegistry = $this->getManagerRegistry(ProviderEntity::class, $aggregationBuilder);

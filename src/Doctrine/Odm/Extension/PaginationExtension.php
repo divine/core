@@ -98,6 +98,7 @@ final class PaginationExtension implements AggregationResultCollectionExtensionI
      * {@inheritdoc}
      *
      * @throws RuntimeException
+     * @throws \Exception
      */
     public function getResult(Builder $aggregationBuilder, string $resourceClass, Operation $operation = null, array $context = []): iterable
     {
@@ -109,9 +110,12 @@ final class PaginationExtension implements AggregationResultCollectionExtensionI
         $attribute = $operation?->getExtraProperties()['doctrine_mongodb'] ?? [];
         $executeOptions = $attribute['execute_options'] ?? [];
 
-        return new Paginator($aggregationBuilder->execute($executeOptions), $manager->getUnitOfWork(), $resourceClass, $aggregationBuilder->getPipeline());
+        return new Paginator($aggregationBuilder->getAggregation($executeOptions)->getIterator(), $manager->getUnitOfWork(), $resourceClass, $aggregationBuilder->getPipeline());
     }
 
+    /**
+     * @throws \Exception
+     */
     private function addCountToContext(Builder $aggregationBuilder, array $context): array
     {
         if (!($context['graphql_operation_name'] ?? false)) {
@@ -119,7 +123,7 @@ final class PaginationExtension implements AggregationResultCollectionExtensionI
         }
 
         if (isset($context['filters']['last']) && !isset($context['filters']['before'])) {
-            $context['count'] = $aggregationBuilder->count('count')->execute()->toArray()[0]['count'];
+            $context['count'] = $aggregationBuilder->count('count')->getAggregation()->getIterator()->toArray()[0]['count'];
         }
 
         return $context;

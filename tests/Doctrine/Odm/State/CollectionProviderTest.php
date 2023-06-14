@@ -55,7 +55,7 @@ class CollectionProviderTest extends TestCase
 
         $aggregationBuilderProphecy = $this->prophesize(Builder::class);
         $aggregationBuilderProphecy->hydrate(ProviderEntity::class)->willReturn($aggregationBuilderProphecy)->shouldBeCalled();
-        $aggregationBuilderProphecy->execute([])->willReturn($iterator)->shouldBeCalled();
+        $aggregationBuilderProphecy->getAggregation()->willReturn($iterator)->shouldBeCalled();
         $aggregationBuilder = $aggregationBuilderProphecy->reveal();
 
         $repositoryProphecy = $this->prophesize(DocumentRepository::class);
@@ -81,7 +81,7 @@ class CollectionProviderTest extends TestCase
 
         $aggregationBuilderProphecy = $this->prophesize(Builder::class);
         $aggregationBuilderProphecy->hydrate(ProviderEntity::class)->willReturn($aggregationBuilderProphecy)->shouldBeCalled();
-        $aggregationBuilderProphecy->execute(['allowDiskUse' => true])->willReturn($iterator)->shouldBeCalled();
+        $aggregationBuilderProphecy->getAggregation(['allowDiskUse' => true])->willReturn($iterator)->shouldBeCalled();
         $aggregationBuilder = $aggregationBuilderProphecy->reveal();
 
         $repositoryProphecy = $this->prophesize(DocumentRepository::class);
@@ -148,7 +148,7 @@ class CollectionProviderTest extends TestCase
 
         $aggregationBuilderProphecy = $this->prophesize(Builder::class);
         $aggregationBuilderProphecy->hydrate(ProviderEntity::class)->willReturn($aggregationBuilderProphecy)->shouldBeCalled();
-        $aggregationBuilderProphecy->execute([])->willReturn($iterator)->shouldBeCalled();
+        $aggregationBuilderProphecy->getAggregation()->willReturn($iterator)->shouldBeCalled();
         $aggregationBuilder = $aggregationBuilderProphecy->reveal();
 
         $repositoryProphecy = $this->prophesize(DocumentRepository::class);
