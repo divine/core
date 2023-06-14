@@ -333,7 +333,7 @@ class PaginationExtensionTest extends TestCase
         ]);
 
         $aggregationBuilderProphecy = $this->prophesize(Builder::class);
-        $aggregationBuilderProphecy->getAggregation()->willReturn($iteratorProphecy->reveal());
+        $aggregationBuilderProphecy->getAggregation()->getIterator()->willReturn($iteratorProphecy->reveal());
         $aggregationBuilderProphecy->getPipeline()->willReturn([
             [
                 '$facet' => [
@@ -381,7 +381,7 @@ class PaginationExtensionTest extends TestCase
         ]);
 
         $aggregationBuilderProphecy = $this->prophesize(Builder::class);
-        $aggregationBuilderProphecy->getAggregation(['allowDiskUse' => true])->willReturn($iteratorProphecy->reveal());
+        $aggregationBuilderProphecy->getAggregation(['allowDiskUse' => true])->getIterator()->willReturn($iteratorProphecy->reveal());
         $aggregationBuilderProphecy->getPipeline()->willReturn([
             [
                 '$facet' => [

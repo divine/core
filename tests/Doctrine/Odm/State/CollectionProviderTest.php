@@ -148,7 +148,7 @@ class CollectionProviderTest extends TestCase
 
         $aggregationBuilderProphecy = $this->prophesize(Builder::class);
         $aggregationBuilderProphecy->hydrate(ProviderEntity::class)->willReturn($aggregationBuilderProphecy)->shouldBeCalled();
-        $aggregationBuilderProphecy->getAggregation()->willReturn($iterator)->shouldBeCalled();
+        $aggregationBuilderProphecy->getAggregation()->getIterator()->willReturn($iterator)->shouldBeCalled();
         $aggregationBuilder = $aggregationBuilderProphecy->reveal();
 
         $repositoryProphecy = $this->prophesize(DocumentRepository::class);
