@@ -592,7 +592,8 @@ jobs:
         php:
           - '8.2'
       fail-fast: false
-    # env:
+    env:
+        SYMFONY_PHPUNIT_REMOVE_RETURN_TYPEHINT: 1
       # See https://github.com/doctrine/DoctrineMongoDBBundle/pull/673
       #SYMFONY_DEPRECATIONS_HELPER: max[direct]=0
     steps:
