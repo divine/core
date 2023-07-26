@@ -71,6 +71,6 @@ final class ItemProvider implements ProviderInterface
 
         $executeOptions = $operation->getExtraProperties()['doctrine_mongodb']['execute_options'] ?? [];
 
-        return $aggregationBuilder->hydrate($resourceClass)->execute($executeOptions)->current() ?: null;
+        return $aggregationBuilder->hydrate($resourceClass)->getAggregation($executeOptions)->getIterator()->current() ?: null;
     }
 }

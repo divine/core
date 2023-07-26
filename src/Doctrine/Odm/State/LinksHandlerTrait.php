@@ -110,7 +110,7 @@ trait LinksHandlerTrait
             return $aggregation;
         }
 
-        $results = $aggregation->execute($executeOptions)->toArray();
+        $results = $aggregation->getAggregation($executeOptions)->getIterator()->toArray();
         $in = [];
         foreach ($results as $result) {
             foreach ($result[$lookupPropertyAlias] ?? [] as $lookupResult) {
